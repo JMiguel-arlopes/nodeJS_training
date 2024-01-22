@@ -13,8 +13,8 @@ app.get("/home", (req, resp) => {
 });
 
 // ENVIANDO JSON:
-app.get("/users", (req, resp) => {
-  const users = [
+app.get("/test", (req, resp) => {
+  const test = [
     {
       name: "joão miguel",
       idade: 20,
@@ -24,7 +24,7 @@ app.get("/users", (req, resp) => {
       idade: 17,
     },
   ];
-  resp.status(200).json(users);
+  resp.status(200).json(test);
 });
 
 // A função app.post só é acionada quando ocorre uma requisição post e não quando entra na página.
@@ -32,6 +32,29 @@ app.get("/users", (req, resp) => {
 // utilize o algumaCoisaModel.create no req.body (que é onde fica as informações mandadas o Post ou Form HTML)
 // faça o servidor retornar o json do que você enviou: resp.status(201).json(oDadoAcima)
 
+// PEGA O JSON INTEIRO PARA O USUARIO
+app.get("/users", async (req, resp) => {
+  try {
+    const users = await UserModel.find({});
+    resp.status(200).json(users);
+  } catch (error) {
+    resp.status(500).send(error.message);
+  }
+});
+
+// PEGA UM ITEM ESPECIFICO DO JSON PELO ID
+app.get("/users/:id", async (req, resp) => {
+  const id = req.params.id;
+
+  try {
+    const user = await UserModel.findById(id);
+    resp.status(200).json(user);
+  } catch (error) {
+    resp.status(500).send(error.message);
+  }
+});
+
+// POSTA/INSERE 1 ITEM NO JSON
 app.post("/users", async (req, resp) => {
   try {
     const user = await UserModel.create(req.body);
@@ -41,7 +64,29 @@ app.post("/users", async (req, resp) => {
   }
 });
 
+// ATUALIZA UM DADO DO ITEM (PATCH) OU ELE INTEIRO (PUT)
+app.patch("/users/:id", async (req, resp) => {
+  const id = req.params.id;
+  try {
+    const user = await UserModel.findByIdAndUpdate(id, req.body, { new: true });
+    resp.status(201).json(user);
+  } catch (error) {
+    resp.status(500).send(error.message);
+  }
+});
+
+app.delete("users/:id", async (req, resp) => {
+  const id = req.params.id;
+
+  try {
+    const user = UserModel.findByIdAndDelete(id);
+    resp.status(200).json(user);
+  } catch (error) {
+    resp.status(500).send(error.message);
+  }
+});
+
 // INICIALIZANDO SERVIDOR NA WEB:
 app.listen(port, () => {
-  console.log("deu bom familia");
+  console.log(`servidor na porta ${port} está online`);
 });
