@@ -1,10 +1,10 @@
 const express = require("express");
+const UserModel = require("../modules/models/user.model");
 
 const app = express();
 const port = 8080;
 
-// SINTAXE:
-// .get(path, (req, resp) => {...codigo})
+app.use(express.json());
 
 // ENVIANDO HTML:
 app.get("/home", (req, resp) => {
@@ -25,6 +25,20 @@ app.get("/users", (req, resp) => {
     },
   ];
   resp.status(200).json(users);
+});
+
+// A função app.post só é acionada quando ocorre uma requisição post e não quando entra na página.
+// esse post vai seguir um modelo que você montou pelo mongoose
+// utilize o algumaCoisaModel.create no req.body (que é onde fica as informações mandadas o Post ou Form HTML)
+// faça o servidor retornar o json do que você enviou: resp.status(201).json(oDadoAcima)
+
+app.post("/users", async (req, resp) => {
+  try {
+    const user = await UserModel.create(req.body);
+    resp.status(201).json(user);
+  } catch (error) {
+    resp.status(500).send(error.message);
+  }
 });
 
 // INICIALIZANDO SERVIDOR NA WEB:
