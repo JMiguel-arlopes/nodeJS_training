@@ -75,6 +75,7 @@ app.patch("/users/:id", async (req, resp) => {
   }
 });
 
+// DELETANDO ITEM JSON
 app.delete("users/:id", async (req, resp) => {
   const id = req.params.id;
 
